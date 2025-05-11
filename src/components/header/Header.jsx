@@ -2,12 +2,12 @@
 import { useState } from "react";
 // import { supabase } from "../../../supabaseClient";
 // import { useNavigate } from "react-router-dom";
-import { IconButton } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useLocation } from "react-router-dom"; // ✅ Used to detect active route
 
-const Header = ({ darkMode, setDarkMode }) => {
+const Header = ({ mode, setMode }) => {
   //   const [user, setUser] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const location = useLocation();
@@ -35,52 +35,110 @@ const Header = ({ darkMode, setDarkMode }) => {
   ];
 
   return (
-    <header className="sticky top-0 w-full z-40 flex items-center justify-between px-4 py-2 bg-white dark:bg-[#0b1120] shadow text-black dark:text-white transition-colors duration-300">
+    <Box
+      component="header"
+      sx={theme => ({
+        position: "sticky",
+        top: 0,
+        width: "100%",
+        zIndex: 40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        px: 4,
+        py: 1.5,
+        bgcolor: theme.palette.customBackground.footer,
+        color: theme.palette.customText.heading,
+        transition: theme.customTransitions.surface(theme),
+      })}
+    >
       {/* Logo + Identity */}
-      <div className="flex items-center space-x-2">
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <a href="/home">
-          <img
+          <Box
+            component="img"
             src="/logos/SmallerLogo.PNG"
             alt="Logo"
-            className="h-12 w-auto"
+            sx={{ height: 48, width: "auto" }}
           />
         </a>
-        <a href="/home" className="flex flex-col leading-tight">
-          <span className="font-semibold text-xl">Template</span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Slogan</span>
+        <a href="/home" style={{ textDecoration: "none" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+            <Typography
+              sx={theme => ({
+                fontWeight: 600,
+                fontSize: "1.25rem",
+                color: theme.palette.customText.heading,
+              })}
+            >
+              Template
+            </Typography>
+            <Typography
+              sx={theme => ({
+                fontSize: "0.875rem",
+                color: theme.palette.customText.textMuted,
+              })}
+            >
+              Slogan
+            </Typography>
+          </Box>
         </a>
-      </div>
+      </Box>
 
       {/* Hamburger - mobile */}
-      <div
-        className="md:hidden cursor-pointer text-3xl"
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          fontSize: "1.875rem",
+          cursor: "pointer",
+        }}
         onClick={() => setIsDrawerOpen(true)}
       >
         ☰
-      </div>
+      </Box>
 
       {/* Desktop Nav Links */}
-      <nav className="hidden md:flex gap-4 items-center">
+      <Box
+        component="nav"
+        sx={{
+          display: { xs: "none", md: "flex" },
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
         {navLinks.map((item, i) => {
           const isActive = location.pathname === item.link;
           return (
-            <a
+            <Box
               key={i}
+              component="a"
               href={item.link}
-              className={`px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
-                isActive ? "text-base-pink font-bold" : ""
-              }`}
+              sx={theme => ({
+                textDecoration: 'none',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+                px: 1.5,
+                py: 1,
+                borderBottom: isActive
+                  ? `2px solid ${theme.palette.brand.basePink}`
+                  : '2px solid transparent',
+                color: isActive ? theme.palette.brand.basePink : 'inherit',
+                transition: 'border-color 0.3s, color 0.3s',
+              })}
             >
               {item.text}
-            </a>
+            </Box>
           );
         })}
 
         {/* Dark mode toggle */}
-        <IconButton onClick={() => setDarkMode((prev) => !prev)} color="inherit">
-          {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+        <IconButton
+          onClick={() => setMode(prev => (prev === "light" ? "dark" : "light"))}
+          color="inherit"
+        >
+          {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
         </IconButton>
-      </nav>
+      </Box>
 
       {/* Account menu */}
       {/* {user && (
@@ -109,41 +167,90 @@ const Header = ({ darkMode, setDarkMode }) => {
 
       {/* Drawer Overlay */}
       {isDrawerOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+        <Box
+          sx={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 30,
+          }}
           onClick={() => setIsDrawerOpen(false)}
         />
       )}
 
       {/* Drawer */}
-      <div
-        className={`fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
-          isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+      <Box
+        sx={theme => ({
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: 256,
+          bgcolor: theme.palette.customBackground.section,
+          transform: isDrawerOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s ease-in-out",
+          zIndex: 40,
+          boxShadow: theme.shadows[6],
+        })}
       >
-        <div className="flex flex-col items-center pt-10">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            pt: 10,
+          }}
+        >
           <img
             src="/src/assets/react.svg"
             alt="Drawer Logo"
-            className="h-20 w-auto mb-4"
+            style={{ height: "5rem", marginBottom: "1rem" }}
           />
-          <span className="text-xl font-bold text-gray-900 dark:text-white">Name</span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Slogan</span>
-        </div>
-        <nav className="flex flex-col mt-6 space-y-4 px-6">
+          <Typography
+            sx={theme => ({
+              fontWeight: "bold",
+              fontSize: "1.25rem",
+              color: theme.palette.customText.heading,
+            })}
+          >
+            Name
+          </Typography>
+          <Typography
+            sx={theme => ({
+              fontSize: "0.875rem",
+              color: theme.palette.customText.textMuted,
+            })}
+          >
+            Slogan
+          </Typography>
+        </Box>
+        <Box
+          component="nav"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            px: 3,
+            mt: 6,
+          }}
+        >
           {navLinks.map((item, i) => (
             <a
               key={i}
               href={item.link}
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-base"
+              style={{
+                fontSize: "1rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
               onClick={() => setIsDrawerOpen(false)}
             >
               {item.text}
             </a>
           ))}
-        </nav>
-      </div>
-    </header>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

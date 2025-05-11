@@ -15,24 +15,59 @@ const SectionDivider = ({ text }) => {
   return (
     <Box
       ref={ref}
-      className="relative w-full my-12 px-4"
+      sx={{
+        position: 'relative',
+        width: '100%',
+        my: 12,
+        px: 4,
+      }}
     >
       {/* Static gradient divider line */}
       <Box
-  className="absolute top-1/2 left-0 transform -translate-y-1/2 z-0 h-[2px] w-full bg-[linear-gradient(to_right,_#ccc,_#333,_#ccc)] dark:bg-[linear-gradient(to_right,_#1a1a1a,_#555,_#1a1a1a)] transition-colors duration-300"
-/>
+        sx={theme => ({
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          transform: 'translateY(-50%)',
+          zIndex: 0,
+          height: '2px',
+          width: '100%',
+          background: theme.palette.mode === 'dark'
+            ? 'linear-gradient(to right, #1f2937, #4b5563, #1f2937)'
+            : 'linear-gradient(to right, #e5e7eb, #9ca3af, #e5e7eb)',
+          transition: theme.customTransitions.surface(theme),
+        })}
+      />
 
       {/* Centered and animated text */}
       <Box
-        className="relative z-10 flex justify-center"
+        sx={{
+          position: 'relative',
+          zIndex: 10,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
       >
         <motion.div style={{ x }}>
           <Box
-            className="bg-white dark:bg-[#0f172a] px-4 py-1 transition-colors duration-300"
+            sx={theme => ({
+              bgcolor: theme.palette.customBackground.section,
+              px: 4,
+              py: 1,
+              transition: theme.customTransitions.surface(theme),
+              display: 'inline-block',
+            })}
           >
             <Typography
               variant="h4"
-              className="font-bold text-gray-900 dark:text-white uppercase tracking-wide whitespace-nowrap"
+              sx={theme => ({
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                whiteSpace: 'nowrap',
+                color: theme.palette.customText.heading,
+                transition: theme.customTransitions.text(theme),
+              })}
             >
               {text}
             </Typography>

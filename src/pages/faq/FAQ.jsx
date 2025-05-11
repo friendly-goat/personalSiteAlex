@@ -1,4 +1,5 @@
 import React from "react";
+import { Box, Typography } from "@mui/material";
 
 const faqs = [
   {
@@ -23,27 +24,75 @@ const faqs = [
 
 const Faq = () => {
   return (
-    <section className="py-12 px-6 md:px-16 bg-white dark:bg-gray-900 transition-colors duration-300">
-      <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-10 text-center">
+    <Box
+      component="section"
+      sx={theme => ({
+        py: 8,
+        px: { xs: 4, md: 8 },
+        bgcolor: theme.palette.customBackground.section,
+        transition: theme.customTransitions.surface(theme),
+      })}
+    >
+      <Typography
+        component="h2"
+        sx={theme => ({
+          fontSize: { xs: '1.875rem', md: '2.25rem' },
+          fontWeight: 800,
+          color: theme.palette.customText.heading,
+          textAlign: 'center',
+          mb: 6,
+        })}
+      >
         Frequently Asked Questions
-      </h2>
+      </Typography>
 
-      <div className="flex flex-col items-center gap-8 max-w-4xl mx-auto">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 3,
+          mx: 'auto',
+        }}
+      >
         {faqs.map((faq, index) => (
-          <div
+          <Box
             key={index}
-            className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 w-full transition-colors duration-300"
+            sx={theme => ({
+              width: '100%',
+              maxWidth: 800,
+              bgcolor: theme.palette.customCard.background,
+              border: `1px solid ${theme.palette.customCard.border}`,
+              borderRadius: theme.palette.customCard.radius,
+              p: 3, // compact padding for FAQ layout
+              transition: theme.customTransitions.surface(theme),
+            })}
           >
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <Typography
+              component="h3"
+              sx={theme => ({
+                fontSize: '1rem',
+                fontWeight: 600,
+                mb: 1,
+                color: theme.palette.customText.heading,
+              })}
+            >
               {faq.question}
-            </h3>
-            <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+            </Typography>
+            <Typography
+              component="p"
+              sx={theme => ({
+                fontSize: '0.95rem',
+                lineHeight: 1.5,
+                color: theme.palette.customText.body,
+              })}
+            >
               {faq.answer}
-            </p>
-          </div>
+            </Typography>
+          </Box>
         ))}
-      </div>
-    </section>
+      </Box>
+    </Box>
   );
 };
 

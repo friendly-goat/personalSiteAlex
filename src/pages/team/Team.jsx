@@ -1,6 +1,7 @@
 import React from "react";
 import HeadShotWithText from "../../components/headShotWithText/headShotWithText";
-import headShotPic from "../../assets/pictures/headshots/placeholder-headshot.png"
+import headShotPic from "../../assets/pictures/headshots/placeholder-headshot.png";
+import { Box, Typography } from "@mui/material";
 
 const teamMembers = [
   {
@@ -37,19 +38,30 @@ const teamMembers = [
 
 const Team = () => {
   return (
-    // <div className="px-4 py-12 md:py-20 bg-gray-50">
-    //   <div className="max-w-5xl mx-auto text-center mb-12">
-    //     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-    //       Meet the Team
-    //     </h2>
-    //     <p className="text-lg text-gray-600">
-    //       The passionate professionals behind Twistomy — dedicated to
-    //       transforming ostomy care through innovation and compassion.
-    //     </p>
-    //   </div>
-    <div>
+    <Box
+      component="section"
+      sx={theme => ({
+        py: 8,
+        px: { xs: 4, md: 8 },
+        bgcolor: theme.palette.customBackground.section,
+        transition: theme.customTransitions.surface(theme),
+      })}
+    >
+      <Typography
+        component="h2"
+        sx={theme => ({
+          fontSize: { xs: '1.875rem', md: '2.25rem' },
+          fontWeight: 800,
+          color: theme.palette.customText.heading,
+          textAlign: 'center',
+          mb: 6,
+        })}
+      >
+        Meet The Team
+      </Typography>
+
       <HeadShotWithText members={teamMembers} />
-    </div>
+    </Box>
   );
 };
 

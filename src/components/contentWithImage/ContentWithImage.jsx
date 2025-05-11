@@ -1,15 +1,16 @@
 import React, { useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import { motion, useAnimation, useInView } from "framer-motion";
+import { Typography, Box } from "@mui/material";
 
 const ContentWithImage = ({
   imageSrc,
   imageAlt = "",
   imageOnLeft = false,
   content = [],
-  containerStyle = "",
-  imageStyle = "",
-  textStyle = "",
+  paddingX,      // replaces containerStyle
+  imageSx = {},  // replaces imageStyle
+  textSx = {},   // replaces textStyle
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
@@ -28,37 +29,70 @@ const ContentWithImage = ({
       }
       textControls.start({ x: 0, opacity: 1, transition: { duration: 0.8 } });
     }
-  }, [isInView]);
+  }, [isInView, imageSrc, imageControls, textControls]);
 
   const renderContent = () =>
     content.map((item, index) => {
       switch (item.type) {
         case "header":
           return (
-            <h2
+            <Typography
               key={index}
-              className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white"
+              component="h2"
+              sx={theme => ({
+                fontSize: {
+                  xs: '1.875rem',
+                  md: '2.25rem',
+                },
+                fontWeight: 800,
+                mb: 3,
+                lineHeight: '1.25',
+                color: theme.palette.customText.heading,
+                textAlign: 'center', // ✅ center header only
+                transition: theme.customTransitions.text(theme),
+              })}
             >
               {item.text}
-            </h2>
+            </Typography>
           );
         case "subheader":
           return (
-            <h3
+            <Typography
               key={index}
-              className="text-xl md:text-2xl font-semibold mb-3 leading-snug text-gray-800 dark:text-gray-200"
+              component="h3"
+              sx={theme => ({
+                fontSize: {
+                  xs: '1.25rem',
+                  md: '1.5rem',
+                },
+                fontWeight: 600,
+                mb: 3,
+                lineHeight: '1.375',
+                color: theme.palette.customText.subheading,
+                transition: theme.customTransitions.text(theme),
+              })}
             >
               {item.text}
-            </h3>
+            </Typography>
           );
         case "paragraph":
           return (
-            <p
+            <Typography
               key={index}
-              className="text-base md:text-lg text-gray-700 dark:text-gray-300 mb-4 leading-relaxed"
+              component="p"
+              sx={theme => ({
+                fontSize: {
+                  xs: '1rem',
+                  md: '1.125rem',
+                },
+                mb: 3,
+                lineHeight: '1.625',
+                color: theme.palette.customText.body,
+                transition: theme.customTransitions.text(theme),
+              })}
             >
               {item.text}
-            </p>
+            </Typography>
           );
         default:
           return null;
@@ -69,44 +103,73 @@ const ContentWithImage = ({
   const textInitial = { x: imageOnLeft ? "-100vw" : "100vw", opacity: 0 };
 
   return (
-    <section
+    <Box
       ref={ref}
-      className={`py-20 px-6 md:px-16 bg-white dark:bg-gray-900 transition-colors duration-300 overflow-hidden ${containerStyle}`}
+      component="section"
+      sx={theme => ({
+        py: { xs: 8, md: 10 },
+        px: paddingX ?? { xs: 6, md: 16 },
+        bgcolor: theme.palette.customBackground.section,
+        transition: theme.customTransitions.surface(theme),
+        overflow: 'hidden',
+      })}
     >
-      <div
-        className={`flex flex-col md:flex-row items-center justify-between gap-10 md:gap-14 ${
-          imageOnLeft ? "md:flex-row-reverse" : ""
-        }`}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: {
+            xs: 'column',
+            md: imageOnLeft ? 'row-reverse' : 'row',
+          },
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: {
+            xs: 10,
+            md: 14,
+          },
+        }}
       >
-        {/* Conditionally render image block */}
         {imageSrc && (
           <motion.div
             initial={imageInitial}
             animate={imageControls}
-            className="w-full md:w-[44%]"
+            style={{ width: '100%' }}
           >
-            <img
+            <Box
+              component="img"
               src={imageSrc}
               alt={imageAlt}
-              className={`w-full object-cover rounded-2xl ${imageStyle}`}
+              sx={{
+                width: '100%',
+                objectFit: 'cover',
+                borderRadius: '1rem',
+                ...imageSx,
+              }}
             />
           </motion.div>
         )}
 
-        {/* Text Box */}
         <motion.div
           initial={textInitial}
           animate={textControls}
-          className={`w-full ${
-            imageSrc ? "md:w-[48%]" : "md:w-full"
-          } ${textStyle}`}
+          style={{ width: '100%' }}
         >
-          <div className="bg-[#F5F5F5] dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 transition-colors duration-300">
+          <Box
+            sx={theme => ({
+              width: '100%',
+              bgcolor: theme.palette.customCard.background,
+              border: `1px solid ${theme.palette.customCard.border}`,
+              borderRadius: theme.palette.customCard.radius,
+              p: theme.palette.customCard.padding,
+              transition: theme.customTransitions.surface(theme),
+              ...textSx,
+            })}
+          >
             {renderContent()}
-          </div>
+          </Box>
         </motion.div>
-      </div>
-    </section>
+      </Box>
+    </Box>
   );
 };
 
@@ -122,7 +185,11 @@ ContentWithImage.propTypes = {
       text: PropTypes.string.isRequired,
     })
   ).isRequired,
-  containerStyle: PropTypes.string,
-  imageStyle: PropTypes.string,
-  textStyle: PropTypes.string,
+  paddingX: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.number,
+    PropTypes.array,
+  ]),
+  imageSx: PropTypes.object,
+  textSx: PropTypes.object,
 };
