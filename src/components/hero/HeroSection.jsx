@@ -1,28 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Box, Typography, useTheme } from "@mui/material";
 
 export default function HeroSection() {
+  const theme = useTheme();
   const containerRef = useRef(null);
 
-  /* Three.js refs */
   const mixerRef = useRef(null);
-  const actionsRef = useRef([]); // every clip action
-  const rootRef = useRef(null); // model root
+  const actionsRef = useRef([]);
+  const rootRef = useRef(null);
   const clock = useRef(new THREE.Clock());
 
-  /* hover state (imperative) */
   const explodedRef = useRef(false);
-
-  /* React state just for initial button visibility (optional) */
   const [loaded, setLoaded] = useState(false);
 
-  /* -------------------------------------------------- */
-  /* scene setup                                        */
-  /* -------------------------------------------------- */
   useEffect(() => {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("black");
+    const isDark = theme.palette.mode === "dark";
+
+    // ✅ Background and fog color
+    const backgroundColor = isDark ? "#000000" : "#D3D3D3";
+    scene.background = new THREE.Color(backgroundColor);
+    if (!isDark) {
+      scene.fog = new THREE.Fog("#D3D3D3", 1, 8);
+    }
 
     const container = containerRef.current;
     const camera = new THREE.PerspectiveCamera(
@@ -38,9 +40,9 @@ export default function HeroSection() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearColor(backgroundColor); // ✅ Match fog & background
     container.appendChild(renderer.domElement);
 
-    /* spotlight 1*/
     const spot = new THREE.SpotLight(0xffffff, 3);
     spot.position.set(0, 2, 0);
     spot.angle = Math.PI / 3;
@@ -52,29 +54,29 @@ export default function HeroSection() {
     spot.target.position.set(0, 0, 0);
     scene.add(spot.target);
 
-    /* spotlight 2*/
     const spot2 = new THREE.SpotLight(0xffffff, 3);
     spot2.position.set(0, 2, 1);
     spot2.angle = Math.PI / 4;
     spot2.penumbra = 0.3;
     spot2.decay = 2;
     spot2.distance = 20;
-    spot2.castShadow = false; // no shadow
+    spot2.castShadow = false;
     scene.add(spot2);
     spot2.target.position.set(0, 0, 0);
     scene.add(spot2.target);
 
-    /* floor */
+    // ✅ Larger floor to prevent horizon gap, dynamic color
+    const floorColor = isDark ? 0x333333 : 0xd0d0d0;
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(10, 10),
-      new THREE.MeshPhongMaterial({ color: 0x333333 })
-    );
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.MeshStandardMaterial({ color: floorColor, roughness: 1, metalness: 0 })
+    );    
     floor.receiveShadow = true;
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.3;
     scene.add(floor);
 
-    /* load GLB with many clips */
+    // ✅ Load animated model
     new GLTFLoader().load("/model/continent_animated.glb", (gltf) => {
       const root = gltf.scene;
       root.scale.setScalar(0.1);
@@ -94,15 +96,14 @@ export default function HeroSection() {
         const a = mixer.clipAction(clip);
         a.clampWhenFinished = true;
         a.setLoop(THREE.LoopOnce);
-        a.play(); // move to frame_0
-        a.paused = true; // keep model assembled
+        a.play();
+        a.paused = true;
         return a;
       });
 
       setLoaded(true);
     });
 
-    /* resize */
     const onResize = () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
@@ -110,20 +111,19 @@ export default function HeroSection() {
     };
     window.addEventListener("resize", onResize);
 
-    /* pointer‑move tilt */
     const targetRot = { x: 0, y: 0 };
     const onMove = (e) => {
       const rect = container.getBoundingClientRect();
       const nx = (e.clientX - rect.left) / rect.width - 0.5;
       const ny = (e.clientY - rect.top) / rect.height - 0.5;
-      targetRot.x = -ny * 0.2; // max 0.2rad up/down (chatGPT going brazy)
-      targetRot.y = nx * 0.4; // max 0.4rad left/right (chatGPT going brazy)
+      targetRot.x = -ny * 0.2;
+      targetRot.y = nx * 0.4;
     };
 
-    const playDir = (dir /* +1 explode, ‑1 assemble */) => {
+    const playDir = (dir) => {
       actionsRef.current.forEach((a) => {
-        a.timeScale = dir; // just flip direction
-        a.paused = false; // ensure playing
+        a.timeScale = dir;
+        a.paused = false;
       });
       explodedRef.current = dir === 1;
     };
@@ -139,7 +139,6 @@ export default function HeroSection() {
     container.addEventListener("pointerout", onLeave);
     container.addEventListener("pointermove", onMove);
 
-    /* render loop */
     let raf;
     const animate = () => {
       raf = requestAnimationFrame(animate);
@@ -164,7 +163,6 @@ export default function HeroSection() {
     };
     animate();
 
-    /* cleanup */
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
@@ -174,22 +172,77 @@ export default function HeroSection() {
       renderer.dispose();
       container.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [theme]);
 
-  /* ------------------------------------------------------------- */
-  /*  JSX                                                          */
-  /* ------------------------------------------------------------- */
   return (
-    <div className="relative w-full h-full">
+    <Box
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       {/* Left side text */}
-      <div className="absolute z-10 flex flex-col md:w-1/2 h-full justify-between md:justify-center text-center md:text-left py-20 md:left-10">
-        <h1 className="text-5xl font-bold mb-4 text-base-pink">Template</h1>
-        <p className="text-xl">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dignissim, justo ac lobortis cursus, tellus nisi porta justo, in mattis risus urna sit amet lorem.
-        </p>
-      </div>
+      <Box
+        sx={{
+          position: "absolute",
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: {
+            xs: "space-between",
+            md: "center",
+          },
+          textAlign: {
+            xs: "center",
+            md: "left",
+          },
+          height: "100%",
+          width: {
+            xs: "100%",
+            md: "50%",
+          },
+          py: { xs: 10, md: 20 },
+          pl: { md: 10 },
+          pr: { xs: 4, md: 0 },
+        }}
+      >
+        <Typography
+          component="h1"
+          sx={(theme) => ({
+            fontSize: {
+              xs: "2.5rem",
+              md: "3.5rem",
+            },
+            fontWeight: "bold",
+            mb: 4,
+            color: theme.palette.brand.basePink,
+          })}
+        >
+          Template
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: {
+              xs: "1.125rem",
+              md: "1.25rem",
+            },
+            color: "inherit",
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dignissim,
+          justo ac lobortis cursus, tellus nisi porta justo, in mattis risus urna
+          sit amet lorem.
+        </Typography>
+      </Box>
 
-      <div ref={containerRef} className="w-full h-full" />
-    </div>
+      <Box
+        ref={containerRef}
+        sx={{
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    </Box>
   );
 }

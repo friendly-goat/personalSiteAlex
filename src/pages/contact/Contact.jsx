@@ -1,32 +1,105 @@
 import React from "react";
+import { Box, Typography, Button, Link, useTheme } from "@mui/material";
+import EmailIcon from "@mui/icons-material/Email";
 
 const Contact = () => {
+  const theme = useTheme();
+
   return (
-    <section className="py-12 px-6 md:px-16 bg-white dark:bg-gray-900 transition-colors duration-300 min-h-screen">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-10 text-center">
-        Contact Us
-      </h1>
+    <Box
+      component="main"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: theme.palette.customBackground.section,
+        py: 8,
+        px: 4,
+        transition: theme.customTransitions.surface(theme), // ✅ animate background
+      }}
+    >
+      <Box
+        component="section"
+        sx={{
+          width: "100%",
+          maxWidth: 400,
+          textAlign: "center",
+          bgcolor: theme.palette.customCard.background,
+          boxShadow: theme.shadows[theme.palette.customCard.shadow],
+          borderRadius: theme.palette.customCard.radius,
+          border: `1px solid ${theme.palette.customCard.border}`,
+          p: theme.palette.customCard.padding,
+          transition: theme.customTransitions.surface(theme),
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 800,
+            color: theme.palette.customText.heading,
+            mb: 2,
+          }}
+        >
+          Get in Touch
+        </Typography>
 
-      <p className="text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-10">
-        We would love to hear from you! Reach out to us via email or phone.
-      </p>
+        <Typography
+          variant="body1"
+          sx={{
+            color: theme.palette.customText.body,
+            fontSize: "1.125rem",
+            mb: 4,
+          }}
+        >
+          We'd love to hear from you! Whether you have a question, feedback, or just want to say hello,
+          drop us an email and we'll get back to you as soon as possible.
+        </Typography>
 
-      <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
-        <div className="flex items-center gap-4 p-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl w-full max-w-sm transition-colors duration-300">
-          <span className="text-2xl">📧</span>
-          <span className="text-gray-800 dark:text-gray-200 text-base md:text-lg">
-            support@company.com
-          </span>
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 1.5,
+            mb: 2,
+          }}
+        >
+          <EmailIcon sx={{ color: theme.palette.brand.basePink }} />
+          <Link
+            href="mailto:team@template.com"
+            underline="hover"
+            sx={{
+              fontSize: "1.125rem",
+              fontWeight: 500,
+              color: theme.palette.brand.basePink,
+            }}
+          >
+            team@template.com
+          </Link>
+        </Box>
 
-        <div className="flex items-center gap-4 p-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl w-full max-w-sm transition-colors duration-300">
-          <span className="text-2xl">📞</span>
-          <span className="text-gray-800 dark:text-gray-200 text-base md:text-lg">
-            +1-234-567-890
-          </span>
-        </div>
-      </div>
-    </section>
+        <Button
+          variant="contained"
+          onClick={() => window.location = "mailto:team@template.com"}
+          sx={{
+            mt: 2,
+            backgroundColor: theme.palette.brand.basePink,
+            color: "#fff",
+            textTransform: "none",
+            fontWeight: 500,
+            px: 4,
+            py: 1.5,
+            borderRadius: "0.5rem",
+            "&:hover": {
+              backgroundColor: theme.palette.brand.basePinkDark,
+            },
+            transition: theme.customTransitions.surface(theme),
+          }}
+        >
+          Send Us an Email
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
