@@ -15,7 +15,7 @@ const Contact = () => {
         bgcolor: theme.palette.customBackground.section,
         py: 8,
         px: 4,
-        transition: theme.customTransitions.surface(theme), // ✅ animate background
+        transition: theme.customTransitions.surface(theme),
       }}
     >
       <Box

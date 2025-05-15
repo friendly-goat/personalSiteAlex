@@ -29,16 +29,16 @@ function App() {
 
     const baseColors = {
       light: {
-        backgroundDefault: "#ffffff",
-        backgroundPaper: "#f9fafb",
-        cardBackground: "#f3f4f6",
-        footerBackground: "#f3f4f6",
-        textPrimary: "#111827",
-        textSecondary: "#1f2937",
-        textTertiary: "#374151",
-        footerMuted: "#4b5563",
-        footerLink: "#1f2937",
-        border: "#e5e7eb",
+        backgroundDefault: "#fefefe",         // Still bright, clean base
+        backgroundPaper: "#ffffff",           // Main content paper stays white
+        cardBackground: "#f9fafb",            // Light gray for separation
+        footerBackground: "#e5e7eb",          // Noticeably gray, distinct from content
+        textPrimary: "#0f172a",               // Strong navy black
+        textSecondary: "#1e293b",             // Dark slate for contrast
+        textTertiary: "#475569",              // Muted text
+        footerMuted: "#6b7280",               // Mid-gray text for footer
+        footerLink: "#1d4ed8",                // Clear interactive blue
+        border: "#cbd5e1",                    // More defined light gray border
       },
       dark: {
         backgroundDefault: "#111827",
