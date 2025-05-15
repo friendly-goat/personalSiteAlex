@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { useLocation } from "react-router-dom"; // ✅ Used to detect active route
+import { useLocation } from "react-router-dom";
 
 const Header = ({ mode, setMode }) => {
   //   const [user, setUser] = useState(null);
@@ -28,7 +28,6 @@ const Header = ({ mode, setMode }) => {
 
   const navLinks = [
     { text: "Home", link: "/" },
-    // { text: "About", link: "/about" },
     { text: "Team", link: "/team" },
     { text: "FAQ", link: "/faq" },
     { text: "Contact", link: "/contact" },

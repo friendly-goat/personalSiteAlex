@@ -8,9 +8,11 @@ import Table from "../../assets/pictures/Table.png";
 import ContentWithImage from "../../components/contentWithImage/ContentWithImage";
 import SectionDivider from "../../components/sectionDivider/sectionDivider";
 
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 
 const Home = () => {
+  const theme = useTheme();
+
   return (
     <Box
       component="main"
@@ -61,8 +63,9 @@ const Home = () => {
               height: 40,
               cursor: "pointer",
               animation: "bounce 2s infinite",
-              filter:
-                "invert(44%) sepia(73%) saturate(3210%) hue-rotate(165deg) brightness(99%) contrast(109%)",
+              filter: theme.palette.mode === "dark"
+                ? "invert(87%) sepia(11%) saturate(233%) hue-rotate(179deg) brightness(94%) contrast(85%)" // matches #d1d5db
+                : "invert(22%) sepia(5%) saturate(784%) hue-rotate(173deg) brightness(94%) contrast(91%)", // matches #374151
               "@keyframes bounce": {
                 "0%, 100%": {
                   transform: "translateY(0)",
@@ -92,7 +95,7 @@ const Home = () => {
           ]}
           imageOnLeft={true}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -110,7 +113,7 @@ const Home = () => {
           ]}
           imageOnLeft={false}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -130,7 +133,7 @@ const Home = () => {
           ]}
           imageOnLeft={true}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -148,7 +151,7 @@ const Home = () => {
           ]}
           imageOnLeft={false}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -166,7 +169,7 @@ const Home = () => {
           ]}
           imageOnLeft={true}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -186,7 +189,7 @@ const Home = () => {
           ]}
           imageOnLeft={true}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}
@@ -203,7 +206,7 @@ const Home = () => {
           ]}
           imageOnLeft={false}
           paddingX={{ xs: 6, md: 12 }}
-          imageSx={{ borderRadius: "0.5rem", boxShadow: 3 }}
+          imageSx={{ borderRadius: "0.5rem" }}
           textSx={{
             textAlign: { xs: "center", md: "left" },
           }}

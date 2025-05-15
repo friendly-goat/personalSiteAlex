@@ -15,15 +15,25 @@ export default function HeroSection() {
   const explodedRef = useRef(false);
   const [loaded, setLoaded] = useState(false);
 
+  // Color refs for transitions
+  const sceneRef = useRef(null);
+  const backgroundColorRef = useRef(new THREE.Color());
+  const fogRef = useRef(null);
+
   useEffect(() => {
-    const scene = new THREE.Scene();
     const isDark = theme.palette.mode === "dark";
 
-    // ✅ Background and fog color
-    const backgroundColor = isDark ? "#000000" : "#D3D3D3";
-    scene.background = new THREE.Color(backgroundColor);
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+
+    const backgroundColor = isDark ? new THREE.Color("#000000") : new THREE.Color("#D3D3D3");
+    scene.background = backgroundColor;
+    backgroundColorRef.current.copy(backgroundColor);
+
     if (!isDark) {
-      scene.fog = new THREE.Fog("#D3D3D3", 1, 8);
+      const fog = new THREE.Fog("#D3D3D3", 1, 8);
+      scene.fog = fog;
+      fogRef.current = fog;
     }
 
     const container = containerRef.current;
@@ -40,7 +50,7 @@ export default function HeroSection() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(backgroundColor); // ✅ Match fog & background
+    renderer.setClearColor(backgroundColor);
     container.appendChild(renderer.domElement);
 
     const spot = new THREE.SpotLight(0xffffff, 3);
@@ -65,18 +75,16 @@ export default function HeroSection() {
     spot2.target.position.set(0, 0, 0);
     scene.add(spot2.target);
 
-    // ✅ Larger floor to prevent horizon gap, dynamic color
     const floorColor = isDark ? 0x333333 : 0xd0d0d0;
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(100, 100),
       new THREE.MeshStandardMaterial({ color: floorColor, roughness: 1, metalness: 0 })
-    );    
+    );
     floor.receiveShadow = true;
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.3;
     scene.add(floor);
 
-    // ✅ Load animated model
     new GLTFLoader().load("/model/continent_animated.glb", (gltf) => {
       const root = gltf.scene;
       root.scale.setScalar(0.1);
@@ -159,6 +167,17 @@ export default function HeroSection() {
         );
       }
 
+      // Smooth background color transition
+      const desiredBg = new THREE.Color(theme.palette.mode === "dark" ? "#000000" : "#D3D3D3");
+      backgroundColorRef.current.lerp(desiredBg, 0.003);
+      scene.background = backgroundColorRef.current;
+      renderer.setClearColor(backgroundColorRef.current);
+
+      // Animate fog color (light mode only)
+      if (theme.palette.mode === "light" && fogRef.current) {
+        fogRef.current.color.lerp(new THREE.Color("#D3D3D3"), 0.05);
+      }
+
       renderer.render(scene, camera);
     };
     animate();
@@ -175,33 +194,17 @@ export default function HeroSection() {
   }, [theme]);
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      {/* Left side text */}
+    <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
       <Box
         sx={{
           position: "absolute",
           zIndex: 10,
           display: "flex",
           flexDirection: "column",
-          justifyContent: {
-            xs: "space-between",
-            md: "center",
-          },
-          textAlign: {
-            xs: "center",
-            md: "left",
-          },
+          justifyContent: { xs: "space-between", md: "center" },
+          textAlign: { xs: "center", md: "left" },
           height: "100%",
-          width: {
-            xs: "100%",
-            md: "50%",
-          },
+          width: { xs: "100%", md: "50%" },
           py: { xs: 10, md: 20 },
           pl: { md: 10 },
           pr: { xs: 4, md: 0 },
@@ -210,10 +213,7 @@ export default function HeroSection() {
         <Typography
           component="h1"
           sx={(theme) => ({
-            fontSize: {
-              xs: "2.5rem",
-              md: "3.5rem",
-            },
+            fontSize: { xs: "2.5rem", md: "3.5rem" },
             fontWeight: "bold",
             mb: 4,
             color: theme.palette.brand.basePink,
@@ -223,10 +223,7 @@ export default function HeroSection() {
         </Typography>
         <Typography
           sx={{
-            fontSize: {
-              xs: "1.125rem",
-              md: "1.25rem",
-            },
+            fontSize: { xs: "1.125rem", md: "1.25rem" },
             color: "inherit",
           }}
         >
@@ -236,13 +233,7 @@ export default function HeroSection() {
         </Typography>
       </Box>
 
-      <Box
-        ref={containerRef}
-        sx={{
-          width: "100%",
-          height: "100%",
-        }}
-      />
+      <Box ref={containerRef} sx={{ width: "100%", height: "100%" }} />
     </Box>
   );
 }

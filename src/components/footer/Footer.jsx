@@ -1,11 +1,12 @@
 import React from "react";
 import { Box, Typography, Link, Stack } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 export default function Footer() {
+  const location = useLocation();
   const navLinks = [
     { text: "Home", link: "/" },
     { text: "Team", link: "/team" },
-    { text: "News", link: "/news" },
     { text: "FAQ", link: "/faq" },
     { text: "Contact", link: "/contact" },
   ];
@@ -57,28 +58,31 @@ export default function Footer() {
           flexWrap="wrap"
           useFlexGap
         >
-          {navLinks.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.link}
-              underline="none"
-              sx={theme => ({
-                px: 1,
-                py: 0.5,
-                borderBottom: "2px solid transparent",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                transition: "all 0.3s",
-                color: theme.palette.customText.footerLink,
-                "&:hover": {
-                  color: theme.palette.brand.basePink,
-                  borderColor: theme.palette.brand.basePink,
-                },
-              })}
-            >
-              {item.text}
-            </Link>
-          ))}
+          {navLinks.map((item, i) => {
+            const isActive = location.pathname === item.link;
+            return (
+              <Box
+                key={i}
+                component="a"
+                href={item.link}
+                sx={theme => ({
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
+                  px: 1.5,
+                  py: 1,
+                  borderBottom: isActive
+                    ? `2px solid ${theme.palette.brand.basePink}`
+                    : '2px solid transparent',
+                  color: isActive ? theme.palette.brand.basePink : 'inherit',
+                  transition: 'border-color 0.3s, color 0.3s',
+                })}
+              >
+                {item.text}
+              </Box>
+            );
+          })}
+
         </Stack>
 
         {/* Contact */}
@@ -87,22 +91,27 @@ export default function Footer() {
           alignItems={{ xs: "center", md: "flex-end" }}
           textAlign={{ xs: "center", md: "right" }}
         >
-          <Typography variant="body2">
-            Mail:&nbsp;
-            <Link
-              href="mailto:info@template.com"
-              underline="hover"
-              sx={theme => ({
-                color: theme.palette.customText.footerLink,
-                fontWeight: 500,
-                "&:hover": {
-                  color: theme.palette.brand.basePink,
-                },
-              })}
-            >
-              info@template.com
-            </Link>
-          </Typography>
+          <Link
+            href="mailto:info@template.com"
+            underline="hover"
+            sx={theme => ({
+              display: "flex",
+              alignItems: "center",
+              fontWeight: 500,
+              color: theme.palette.customText.footerLink,
+              "&:hover": {
+                color: theme.palette.brand.basePink,
+              },
+            })}
+          >
+            <Box
+              component="img"
+              src="/logos/icons8-mail-100.png"
+              alt="Email"
+              sx={{ width: 20, height: 20, mr: 1 }}
+            />
+            Email: team@template.com
+          </Link>
 
           <Link
             href="https://linkedin.com"
@@ -143,7 +152,7 @@ export default function Footer() {
           >
             <Box
               component="img"
-              src="/logos/yt_logo_mono_dark.png"
+              src="/logos/icons8-youtube-480.png"
               alt="YouTube"
               sx={{ width: 20, height: 20, mr: 1 }}
             />
